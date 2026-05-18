@@ -187,3 +187,65 @@ File: <file cụ thể>
 - [ ] Characterization tests đã chạy và xanh (hoặc known issues đã ghi nhận)
 - [ ] Biết phân biệt characterization test vs test mới khi debug
 - [ ] Có plan rõ ràng khi gặp pre-existing bug
+
+---
+
+## Xử lý small fixes sau khi plan đã execute xong
+
+Tình huống: implement theo plan tương đối tốt, nhưng vẫn còn sai/thiếu một vài chỗ nhỏ.
+Vấn đề không phải thiếu baseline — mà là làm sao fix mà không làm lệch plan/spec.
+
+### Bước 1: Liệt kê hết trước, đừng fix ngay
+
+Chạy full test suite, đọc hết output, ghi lại tất cả issue một lần:
+
+```
+Issues found:
+- [ ] validateEmail() không reject email thiếu domain
+- [ ] signup() trả về 500 thay vì 400 khi email trùng
+- [ ] thiếu index trên bảng users.email
+```
+
+Lý do: nếu fix từng cái ngay lập tức, dễ fix cái này tạo ra cái khác và mất dấu.
+
+### Bước 2: Phân loại từng issue
+
+| Issue | Loại | Xử lý |
+|---|---|---|
+| Code sai so với plan | Implementation error | Thêm fix task vào plan hiện tại |
+| Plan đúng nhưng spec thiếu edge case | Spec gap | Update spec → thêm task vào plan |
+| Requirement mới phát sinh khi làm | Scope change | Brainstorming lại phần đó |
+
+### Bước 3: Thêm fix tasks vào cuối plan
+
+Không tạo plan mới. Mở `docs/superpowers/plans/<file-hiện-tại>.md`, thêm vào cuối:
+
+```markdown
+---
+## Post-Execution Fixes
+
+### Task N+1: Fix — validateEmail không reject thiếu domain
+Type: implementation-error
+Root cause: regex pattern thiếu TLD check
+
+File: src/utils/validators.ts
+
+1. Test (đang fail): `npm test -- --testPathPattern=validators` → confirm đỏ
+2. Fix regex: `^[^\s@]+@[^\s@]+\.[^\s@]+$`
+3. Verify: chạy lại → XANH
+4. Chạy full suite → không có regression
+5. Commit: "fix: validateEmail reject missing TLD"
+
+### Task N+2: Fix — signup trả 500 thay vì 400 khi email trùng
+Type: implementation-error
+...
+```
+
+### Bước 4: Execute fix tasks theo TDD bình thường
+
+Mỗi fix task là một vòng TDD nhỏ:
+- Test đang đỏ → confirm đỏ → fix → xanh → commit
+
+Sau mỗi fix task: chạy full test suite để đảm bảo không có regression mới.
+
+**Kết quả:** Plan vẫn là source of truth. Mọi fix được ghi lại. Không có gì bị fix im lặng.
