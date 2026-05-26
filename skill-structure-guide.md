@@ -53,6 +53,34 @@ Tầng 3: references/ + scripts/
 
 ---
 
+## Tầng 1 trong obra/superpowers nằm ở đâu?
+
+Superpowers **không tách tầng 1 thành file riêng**. Tầng 1 nằm ngay đầu SKILL.md dưới dạng YAML frontmatter — tầng 1 và tầng 2 gộp chung một file:
+
+```yaml
+---
+name: brainstorming
+description: "You MUST use this before any creative work - creating features,
+building components, adding functionality, or modifying behavior."
+---
+
+# Brainstorming Ideas Into Designs        ← Tầng 2 bắt đầu từ đây
+...
+```
+
+Ví dụ thực tế từ các skill đã đọc:
+
+| Skill | Frontmatter description |
+|---|---|
+| `brainstorming` | "You MUST use this before any creative work..." |
+| `systematic-debugging` | "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes" |
+| `using-superpowers` | "Use when starting any conversation - establishes how to find and use skills..." |
+
+**Tại sao superpowers gộp tầng 1 + 2?**
+Superpowers có ~15 skill tập trung vào workflow. Goon có 36 skill tool-specific cần scan nhanh. Khi số lượng skill ít và focused, gộp chung vẫn ổn. Khi số lượng lớn, tách metadata ra giúp scan nhanh hơn mà không nạp toàn bộ entry point.
+
+---
+
 ## "References" trong obra/superpowers — thực tế không nhất quán
 
 Superpowers không enforce cấu trúc thống nhất. Mỗi skill tổ chức khác nhau:
